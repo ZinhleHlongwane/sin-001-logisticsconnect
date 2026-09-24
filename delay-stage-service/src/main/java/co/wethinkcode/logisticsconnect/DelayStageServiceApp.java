@@ -7,6 +7,8 @@ public class DelayStageServiceApp {
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7052);
 
+        PackageStatusPublisher packageStatusPublisher = new PackageStatusPublisher();
+
         int[] delayStage = {0};
 
         app.get("/health", ctx -> ctx.result("OK"));
@@ -37,6 +39,8 @@ public class DelayStageServiceApp {
             }
 
             delayStage[0] = stage;
+
+            packageStatusPublisher.publish(stage);
 
             ctx.result("Delay stage updated to " + stage);
         });
