@@ -7,10 +7,18 @@ public class TransitServiceApp {
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7053);
 
+        PackageStatusSubscriber packageStatusSubscriber =
+                new PackageStatusSubscriber();
+
+        packageStatusSubscriber.start();
+
         app.get("/health", ctx -> ctx.result("OK"));
 
         // TODO (Calculates estimated arrival windows based on hub and delay stage.)
         // Add domain endpoints for transit-service here.
+        app.get("/delay-stage", ctx -> {
+            ctx.json(packageStatusSubscriber.getLatestDelayStage());
+        });
     }
 }
 
