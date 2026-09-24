@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class HubCsvReader {
 
@@ -15,7 +12,7 @@ public class HubCsvReader {
 
     public List<Hub> readHubs() {
         List<Hub> hubs = new ArrayList<>();
-        Set<String> seenIds = new HashSet<>();
+        Set<String> seenHubs = new HashSet<>();
 
         InputStream inputStream =
                 getClass().getClassLoader().getResourceAsStream("hubs-global.csv");
@@ -44,11 +41,19 @@ public class HubCsvReader {
                 String sortingCenter = cleaner.cleanSortingCenter(values[2]);
                 Boolean active = cleaner.cleanActiveFlag(values[3]);
 
-                if (id == null || seenIds.contains(id)) {
+                if (id == null) {
                     continue;
                 }
 
-                seenIds.add(id);
+                String duplicateKey = sortingCenter == null
+                        ? id
+                        : sortingCenter.toLowerCase();
+
+                if (seenHubs.contains(duplicateKey)) {
+                    continue;
+                }
+
+                seenHubs.add(duplicateKey);
 
                 hubs.add(new Hub(
                         id,
